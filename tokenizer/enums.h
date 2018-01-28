@@ -95,6 +95,7 @@ TVector<T> ToTagSet(T tag) {
 
 template<typename T>
 TString ToTagStr(T tag) {
+    static_assert(std::is_enum<T>::value, "Type of ToTagSet must be enum");
     TStringBuilder result;
     TVector<T> tagSet = ToTagSet(tag);
     for (auto tag : tagSet) {

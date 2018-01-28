@@ -1,5 +1,9 @@
 PROGRAM()
 
+PEERDIR(
+    library/json
+)
+
 SRCS(
     enums.cpp
     token.cpp

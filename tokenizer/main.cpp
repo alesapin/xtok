@@ -1,6 +1,8 @@
 #include "token.h"
 #include <util/charset/wide.h>
+
 using namespace NTokenizer;
+
 int main() {
     //TVector<TString> XX;
     //TUtf16String str = TUtf16String::FromUtf8("Пы!@ 3,z");
@@ -20,12 +22,9 @@ int main() {
     //Cerr << UTF8ToWide("«")[0] << Endl;
     //Cerr << UTF8ToWide("—")[0] << Endl;
 
-    TUtf16String someText = UTF8ToWide("Привет мир светит солнце!");
-    TVector<TToken> tokens = FromText(someText);
-
-    for (auto& token : tokens) {
-        Cerr << "{ \"text\":\"" << token.GetData() << "\", \"type\":"<< token.GetTypeTag()  << ", \"info\":" << ToTagStr(token.GetGraphemTag()) << "}\n";
-    }
+    TUtf16String s = UTF8ToWide("\n");
+    Cerr << IsSpace(s[0]) << Endl;
+    Cerr << IsCntrl(s[0]) << Endl;
 
     return 0;
 }
