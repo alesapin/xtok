@@ -49,6 +49,7 @@ namespace NTokenizer {
             Data = UTF8ToWide(data);
         }
     };
+
     TUtf16String ToWideText(const TVector<TToken>& tokens);
     TString ToUTF8Text(const TVector<TToken>& tokens);
     TVector<TToken> FromWideText(const TUtf16String& text);

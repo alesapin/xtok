@@ -1,4 +1,4 @@
-#include "token.h"
+#include <tokenizer/libs/token.h>
 #include <util/charset/wide.h>
 
 using namespace NTokenizer;

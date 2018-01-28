@@ -1,12 +1,11 @@
-UNITTEST()
+PROGRAM()
 
 PEERDIR(
     tokenizer/libs
 )
 
 SRCS(
-    tokenizer_ut.cpp
+    main.cpp
 )
-
 
 END()

@@ -1,15 +1,6 @@
-PROGRAM()
-
-PEERDIR(
-    library/json
+RECURSE(
+    libs
+    python-package
+    tools
+    ut
 )
-
-SRCS(
-    enums.cpp
-    token.cpp
-    main.cpp
-)
-
-GENERATE_ENUM_SERIALIZATION(enums.h)
-
-END()

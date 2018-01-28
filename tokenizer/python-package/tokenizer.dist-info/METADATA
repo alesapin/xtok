@@ -1,0 +1,16 @@
+Metadata-Version: 2.0
+Name: tokenizer 
+Version: {version}
+Summary: Python package for russian language tokenizer
+Home-page: http://github.com/alesapin/tokenizer
+Author: alesapin
+License: Apache License, Version 2.0
+Download-URL: https://pypi.python.org/pypi/tokenizer/
+Keywords: catboost
+Platform: Linux
+Platform: Mac OSX
+Platform: Windows
+Platform: Unix
+Requires-Dist: six
+
+This is Tokenizer Python package. An open-source russian language tokenization library.

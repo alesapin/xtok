@@ -1,4 +1,4 @@
-#include <tokenizer/token.h>
+#include <tokenizer/libs/token.h>
 #include <library/unittest/registar.h>
 
 using namespace NTokenizer;
