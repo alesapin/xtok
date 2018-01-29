@@ -196,4 +196,15 @@ SIMPLE_UNIT_TEST_SUITE(TTokenizeTest) {
         }
         UNIT_ASSERT_EQUAL(counter, 3);
     }
+    SIMPLE_UNIT_TEST(TestStrange) {
+        TUtf16String s = UTF8ToWide(" = input.ReadLine()");
+        TVector<TToken> r = FromWideText(s);
+        UNIT_ASSERT_EQUAL(r.size(), 8);
+
+        TUtf16String s1 = UTF8ToWide("GottaBeMobile.com");
+        TVector<TToken> r1 = FromWideText(s1);
+        UNIT_ASSERT_EQUAL(r1.size(), 3);
+        UNIT_ASSERT_EQUAL(r1[2].GetTypeTag(), ETokenType::WORD);
+    }
+
 }

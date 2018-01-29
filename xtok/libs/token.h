@@ -4,6 +4,7 @@
 #include <util/charset/wide.h>
 #include <util/generic/vector.h>
 #include <util/generic/string.h>
+#include <library/json/json_writer.h>
 
 namespace NTokenizer {
     class TToken {
@@ -54,5 +55,5 @@ namespace NTokenizer {
     TString ToUTF8Text(const TVector<TToken>& tokens);
     TVector<TToken> FromWideText(const TUtf16String& text);
     TVector<TToken> FromUTF8Text(const TString& text);
-    TString TokenToJson(const TToken& token, bool pretty = false);
+    void TokenToJson(NJson::TJsonWriter& writer, const TToken& token);
 }

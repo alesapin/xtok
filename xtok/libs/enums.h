@@ -12,6 +12,7 @@ enum class ETokenType {
     NUMBER,
     WORDNUM,
     HIEROGLYPH,
+    ASCII,
 };
 enum class EGraphemTag {
     UNKNOWN = 0x0,

@@ -1,6 +1,5 @@
 #include "token.h"
 
-#include <library/json/json_writer.h>
 #include <util/charset/unidata.h>
 #include <util/string/builder.h>
 #include <util/string/join.h>
@@ -44,8 +43,8 @@ namespace NTokenizer {
             }
             return i;
         }
-        uint CutWord(uint start, const TUtf16String& str) {
-            uint i = start;
+        ui64 CutWord(ui64 start, const TUtf16String& str) {
+            ui64 i = start;
             while (i < str.length() && IsAlphabetic(str[i])) {
                 i++;
             }
@@ -54,14 +53,17 @@ namespace NTokenizer {
             }
             return i;
         }
-        uint CutTrash(uint start, const TUtf16String& str) {
-            uint i = start;
+        ui64 CutTrash(ui64 start, const TUtf16String& str) {
+            ui64 i = start;
             while (i < str.length() &&
                    (IsIdeographic(str[i]) || IsHiragana(str[i]) || IsKatakana(str[i]))) {
                 i++;
             }
 
             return i;
+        }
+        ui64 CutAscii(ui64 start, const TUtf16String& /*str*/) {
+            return ++start;
         }
 
         TToken ProcessWord(const TUtf16String& str) {
@@ -198,6 +200,9 @@ namespace NTokenizer {
         TToken ProcessHieroglyph(const TUtf16String& hir) {
             return TToken(hir, ETokenType::HIEROGLYPH);
         }
+        TToken ProcessAscii(const TUtf16String& ascii) {
+            return TToken(ascii, ETokenType::ASCII);
+        }
     }
     TUtf16String ToWideText(const TVector<TToken>& tokens) {
         TUtf16String result;
@@ -258,6 +263,10 @@ namespace NTokenizer {
                 nextI = CutTrash(i, text);
                 TUtf16String trash = text.substr(i, nextI - i);
                 r = ProcessHieroglyph(trash);
+            } else {
+                nextI = CutAscii(i, text);
+                TUtf16String ascii = text.substr(i, nextI - i);
+                r = ProcessAscii(ascii);
             }
             i = nextI;
             result.push_back(r);
@@ -265,9 +274,7 @@ namespace NTokenizer {
         return result;
     }
 
-    TString TokenToJson(const TToken& token, bool pretty) {
-        TStringStream ss;
-        NJson::TJsonWriter writer(&ss, pretty);
+    void TokenToJson(NJson::TJsonWriter& writer, const TToken& token) {
         writer.OpenMap();
         writer.Write("data", token.GetUTF8Data());
         writer.Write("token_type", ToString(token.GetTypeTag()));
@@ -277,8 +284,6 @@ namespace NTokenizer {
         }
         writer.CloseArray();
         writer.CloseMap();
-        writer.Flush();
-        return ss.Str();
     }
 
     TVector<TToken> FromUTF8Text(const TString& text) {
