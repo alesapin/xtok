@@ -4,7 +4,7 @@
 from util.generic.string cimport TString
 from util.generic.vector cimport TVector
 
-cdef extern from "tokenizer/libs/rawtoken.h" namespace "NTokenizer":
+cdef extern from "xtok/libs/rawtoken.h" namespace "NTokenizer":
     cdef cppclass TRawToken:
         TString Data
         TString TokenType

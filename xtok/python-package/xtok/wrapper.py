@@ -1,5 +1,5 @@
 # coding: utf-8
-from ._tokenizer import _tokenize
+from ._xtok import _tokenize
 
 def tokenize(text):
     if isinstance(text, bytes):

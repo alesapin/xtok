@@ -1,11 +1,11 @@
 UNITTEST()
 
 PEERDIR(
-    tokenizer/libs
+    xtok/libs
 )
 
 SRCS(
-    tokenizer_ut.cpp
+    xtok_ut.cpp
 )
 
 

@@ -33,7 +33,7 @@ class PythonTrait(object):
 
     def gen_cmd(self):
         cmd = [
-            sys.executable, arc_root + '/ya', 'make', os.path.join(arc_root, 'tokenizer', 'python-package', 'tokenizer'),
+            sys.executable, arc_root + '/ya', 'make', os.path.join(arc_root, 'xtok', 'python-package', 'xtok'),
             '--no-src-links', '-r', '--output', out_root, '-DPYTHON_CONFIG=' + self.py_config, '-DNO_DEBUGINFO', '-DOS_SDK=local',
         ]
 
@@ -46,18 +46,20 @@ class PythonTrait(object):
 
     def get_python_info(self):
         if self.python_version.major == 2:
-            py_config = 'python-config'
+            py_config = 'python2-config'
             lang = 'cp27'
         else:
             py_config = 'python3-config'
             lang = 'cp3' + str(self.python_version.minor)
+
+        print("CONFIG:{}".format(py_config))
         return py_config, lang
 
     def so_name(self):
         if self._on_win():
-            return '_tokenizer.pyd'
+            return '_xtok.pyd'
 
-        return '_tokenizer.so'
+        return '_xtok.so'
 
     def dll_ext(self):
         if self._on_win():
@@ -133,7 +135,7 @@ def find_info_in_args(tail_args):
     def prepare_info(arg):
         _, version = arg.split('=')
         major, minor = version.split('.')
-        py_config = 'python-config' if major == '2' else 'python3-config'
+        py_config = 'python2-config' if major == '2' else 'python3-config'
         lang = 'cp{major}{minor}'.format(major=major, minor=minor)
         return py_config, lang
 
@@ -154,25 +156,25 @@ def mine_system_python_ver(tail_args):
 
 
 def build(arc_root, out_root, tail_args):
-    os.chdir(os.path.join(arc_root, 'tokenizer', 'python-package', 'tokenizer'))
+    os.chdir(os.path.join(arc_root, 'xtok', 'python-package', 'xtok'))
 
     py_trait = PythonTrait(arc_root, out_root, tail_args)
     ver = get_version()
 
-    shutil.rmtree('tokenizer', ignore_errors=True)
-    os.makedirs('tokenizer/tokenizer')
+    shutil.rmtree('xtok', ignore_errors=True)
+    os.makedirs('xtok/xtok')
 
     print('Building CPU version', file=sys.stderr)
     cpu_cmd = py_trait.gen_cmd() + ['-DHAVE_CUDA=no']
     print(' '.join(cpu_cmd), file=sys.stderr)
     subprocess.check_call(cpu_cmd)
     print('Building CPU version: OK', file=sys.stderr)
-    shutil.copy(os.path.join(py_trait.out_root, 'tokenizer', 'python-package', 'tokenizer', py_trait.so_name()), 'tokenizer/tokenizer/_tokenizer' + py_trait.dll_ext())
+    shutil.copy(os.path.join(py_trait.out_root, 'xtok', 'python-package', 'xtok', py_trait.so_name()), 'xtok/xtok/_xtok' + py_trait.dll_ext())
 
-    shutil.copy('__init__.py', 'tokenizer/tokenizer/__init__.py')
-    shutil.copy('wrapper.py', 'tokenizer/tokenizer/wrapper.py')
-    dist_info_dir = 'tokenizer/tokenizer-{}.dist-info'.format(ver)
-    shutil.copytree(os.path.join(py_trait.arc_root, 'tokenizer', 'python-package', 'tokenizer.dist-info'), dist_info_dir)
+    shutil.copy('__init__.py', 'xtok/xtok/__init__.py')
+    shutil.copy('wrapper.py', 'xtok/xtok/wrapper.py')
+    dist_info_dir = 'xtok/xtok-{}.dist-info'.format(ver)
+    shutil.copytree(os.path.join(py_trait.arc_root, 'xtok', 'python-package', 'xtok.dist-info'), dist_info_dir)
 
     with open(os.path.join(dist_info_dir, 'METADATA'), 'r') as fm:
         metadata = fm.read()
@@ -180,16 +182,16 @@ def build(arc_root, out_root, tail_args):
     with open(os.path.join(dist_info_dir, 'METADATA'), 'w') as fm:
         fm.write(metadata)
 
-    wheel_name = 'tokenizer-{}-{}-none-{}.whl'.format(ver, py_trait.lang, py_trait.platform)
+    wheel_name = 'xtok-{}-{}-none-{}.whl'.format(ver, py_trait.lang, py_trait.platform)
 
     try:
         os.remove(wheel_name)
     except OSError:
         pass
 
-    shutil.make_archive(wheel_name, 'zip', 'tokenizer')
+    shutil.make_archive(wheel_name, 'zip', 'xtok')
     os.rename(wheel_name + '.zip', wheel_name)
-    shutil.move(wheel_name, os.path.join(py_trait.arc_root, 'tokenizer', 'python-package', wheel_name))
+    shutil.move(wheel_name, os.path.join(py_trait.arc_root, 'xtok', 'python-package', wheel_name))
 
     return wheel_name
 

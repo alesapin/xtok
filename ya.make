@@ -1,3 +1,3 @@
 RECURSE(
-    tokenizer
+    xtok
 )

@@ -1,7 +1,7 @@
-PROGRAM()
+PROGRAM(xtok)
 
 PEERDIR(
-    tokenizer/libs
+    xtok/libs
 )
 
 SRCS(
