@@ -47,6 +47,8 @@ enum class EGraphemTag {
     CR = 0x1000000,
     SINGLE_SEP = 0x2000000,
     MULTI_SEP = 0x4000000,
+    SLASH = 0x8000000,
+    MULTI_WORD = 0x10000000,
 };
 
 template<typename T>

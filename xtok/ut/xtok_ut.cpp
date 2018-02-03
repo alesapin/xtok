@@ -206,5 +206,36 @@ SIMPLE_UNIT_TEST_SUITE(TTokenizeTest) {
         UNIT_ASSERT_EQUAL(r1.size(), 3);
         UNIT_ASSERT_EQUAL(r1[2].GetTypeTag(), ETokenType::WORD);
     }
+    SIMPLE_UNIT_TEST(TestMultiWord) {
+        TUtf16String s = UTF8ToWide("салтыков-щедрин");
+        TVector<TToken> r = FromWideText(s);
+        UNIT_ASSERT_EQUAL(r.size(), 1);
+        UNIT_ASSERT_EQUAL(r[0].GetWideData(), s);
+        UNIT_ASSERT(Contains(r[0].GetGraphemTag(), EGraphemTag::MULTI_WORD));
+
+        TUtf16String s1 = UTF8ToWide("-");
+        TVector<TToken> r1 = FromWideText(s1);
+        UNIT_ASSERT_EQUAL(r1.size(), 1);
+        UNIT_ASSERT_EQUAL(r1[0].GetTypeTag(), ETokenType::PUNCT);
+
+        TUtf16String s2 = UTF8ToWide("-x-y");
+        TVector<TToken> r2 = FromWideText(s2);
+        UNIT_ASSERT_EQUAL(r2.size(), 2);
+        UNIT_ASSERT_EQUAL(r2[0].GetTypeTag(), ETokenType::PUNCT);
+        UNIT_ASSERT_EQUAL(r2[1].GetWideData(), UTF8ToWide("x-y"));
+        UNIT_ASSERT(Contains(r2[1].GetGraphemTag(), EGraphemTag::MULTI_WORD));
+
+        TUtf16String s3 = UTF8ToWide("x-y-");
+        TVector<TToken> r3 = FromWideText(s3);
+        UNIT_ASSERT_EQUAL(r3.size(), 2);
+        UNIT_ASSERT_EQUAL(r3[0].GetWideData(), UTF8ToWide("x-y"));
+        UNIT_ASSERT(Contains(r[0].GetGraphemTag(), EGraphemTag::MULTI_WORD));
+        UNIT_ASSERT_EQUAL(r3[1].GetTypeTag(), ETokenType::PUNCT);
+
+        TUtf16String s4 = UTF8ToWide("Ростов-на-Дону");
+        TVector<TToken> r4 = FromWideText(s4);
+        UNIT_ASSERT_EQUAL(r4.size(), 1);
+    }
+
 
 }

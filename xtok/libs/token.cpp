@@ -45,11 +45,14 @@ namespace NTokenizer {
         }
         ui64 CutWord(ui64 start, const TUtf16String& str) {
             ui64 i = start;
-            while (i < str.length() && IsAlphabetic(str[i])) {
+            while (i < str.length() && (IsAlphabetic(str[i]) || str[i] == '-')) {
                 i++;
             }
             if (i < str.length() && !IsSpace(str[i]) && !IsPunct(str[i])) {
                 return start;
+            }
+            if (i != 0 && str[i - 1] == '-') {
+                return i-1;
             }
             return i;
         }
@@ -74,7 +77,12 @@ namespace NTokenizer {
             bool isCyrrilic = true;
             bool capStart = IsUpper(str[0]);
             int capCounter = 0;
+            bool multiWord = false;
             for (const auto& chr : str) {
+                if (chr == '-') {
+                    multiWord = true;
+                    continue;
+                }
                 if (chr > 127) {
                     isLatin = false;
                 } else {
@@ -95,6 +103,9 @@ namespace NTokenizer {
                 t |= EGraphemTag::CAP_START;
             } else {
                 t |= EGraphemTag::MIXED;
+            }
+            if (multiWord) {
+                t |= EGraphemTag::MULTI_WORD;
             }
             if (isLatin) {
                 t |= EGraphemTag::LATIN;
@@ -134,12 +145,14 @@ namespace NTokenizer {
                     t |= EGraphemTag::QUOTE;
                 } else if (sym == '_') {
                     t |= EGraphemTag::LOWER_DASH;
-                } else if (sym == '-' || sym == 8212) { // longer —
+                } else if (sym == '-' || sym == 8212 || sym == 8211) { // longer —
                     t |= EGraphemTag::DASH;
                 } else if (sym == '(') {
                     t |= EGraphemTag::PARENTHESIS_L;
                 } else if (sym == ')') {
                     t |= EGraphemTag::PARENTHESIS_R;
+                } else if (sym == '/')  {
+                    t |= EGraphemTag::SLASH;
                 } else {
                     t |= EGraphemTag::UNCOMMON_PUNCT;
                 }
@@ -225,18 +238,24 @@ namespace NTokenizer {
         for (ui64 i = 0; i < text.length();) {
             TToken r;
             ui64 nextI = i;
-            if (IsAlphabetic(text[i])) {
+            if (IsAlphabetic(text[i]) || (text[i] == '-' && i != nextI)) {
                 nextI = CutWord(i, text);
+
                 bool notAword = false;
                 if (nextI == i) { //Не продвинулись --> не слово
                     nextI = CutWordNum(i, text);
                     notAword = true;
                 }
-                TUtf16String word = text.substr(i, nextI - i);
-                if (notAword) {
-                    r = ProcessWordNum(word);
+                if (nextI == i) { //всё равно не продвинулись -- это -
+                    r = ProcessPunct(text.substr(i, i+1));
+                    nextI = i + 1;
                 } else {
-                    r = ProcessWord(word);
+                    TUtf16String word = text.substr(i, nextI - i);
+                    if (notAword) {
+                        r = ProcessWordNum(word);
+                    } else {
+                        r = ProcessWord(word);
+                    }
                 }
             } else if (IsPunct(text[i])) {
                 nextI = CutPunct(i, text);
