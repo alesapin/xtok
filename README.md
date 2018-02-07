@@ -50,7 +50,7 @@
 }
 2. cd xtok/tools && ./xtok --input ../data/greenlamp.txt --output tokens.txt #просто с токены с новой строки без информации
 ```
-# python
+### python
 ```python
 >>> from xtok import tokenize
 >>> tokenize("Привет!")
