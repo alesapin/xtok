@@ -26,4 +26,3 @@ def _tokenize(const TString& rawtext):
             "info": tags
         })
     return result
-
