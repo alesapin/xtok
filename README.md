@@ -48,6 +48,7 @@
       }
     ]
 }
+2. cd xtok/tools && ./xtok --input ../data/greenlamp.txt --output tokens.txt #просто с токены с новой строки без информации
 ```
 # python
 ```python
